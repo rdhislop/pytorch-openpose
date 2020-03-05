@@ -9,8 +9,8 @@ import matplotlib
 import torch
 from skimage.measure import label
 
-from .model import handpose_model
-from .util import (transfer, npmax, padRightDownCorner, draw_handpose)
+from pytorch_openpose.model import handpose_model
+from pytorch_openpose.util import (transfer, npmax, padRightDownCorner, draw_handpose)
 
 class Hand(object):
     def __init__(self, model_path):
@@ -74,11 +74,12 @@ class Hand(object):
         return np.array(all_peaks)
 
 if __name__ == "__main__":
-    hand_estimation = Hand('../model/hand_pose_model.pth')
+    import os.path
+    base_dir = os.path.abspath(os.path.dirname(__file__) + '/..')
+    hand_estimation = Hand(base_dir + '/model/hand_pose_model.pth')
 
     # test_image = '../images/hand.jpg'
-    test_image = '../images/hand.jpg'
-    oriImg = cv2.imread(test_image)  # B,G,R order
+    oriImg = cv2.imread(base_dir + '/images/hand.jpg')  # B,G,R order
     peaks = hand_estimation(oriImg)
     canvas = draw_handpose(oriImg, peaks, True)
     cv2.imshow('', canvas)

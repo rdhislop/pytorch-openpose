@@ -8,8 +8,8 @@ import matplotlib
 import torch
 from torchvision import transforms
 
-from util import (transfer, npmax, padRightDownCorner, draw_handpose, draw_bodypose)
-from model import bodypose_model
+from pytorch_openpose.util import (transfer, npmax, padRightDownCorner, draw_handpose, draw_bodypose)
+from pytorch_openpose.model import bodypose_model
 
 class Body(object):
     def __init__(self, model_path):

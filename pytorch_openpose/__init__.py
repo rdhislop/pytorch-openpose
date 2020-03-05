@@ -1,2 +1,2 @@
-from util import (transfer, npmax, padRightDownCorner, draw_handpose)
-from model import bodypose_model
+from .body import Body
+from .hand import Hand
