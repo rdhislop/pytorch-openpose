@@ -8,15 +8,15 @@ import matplotlib
 import torch
 from torchvision import transforms
 
-from src import util
-from src.model import bodypose_model
+from util import (transfer, npmax, padRightDownCorner, draw_handpose, draw_bodypose)
+from model import bodypose_model
 
 class Body(object):
     def __init__(self, model_path):
         self.model = bodypose_model()
         if torch.cuda.is_available():
             self.model = self.model.cuda()
-        model_dict = util.transfer(self.model, torch.load(model_path))
+        model_dict = transfer(self.model, torch.load(model_path))
         self.model.load_state_dict(model_dict)
         self.model.eval()
 
@@ -35,7 +35,7 @@ class Body(object):
         for m in range(len(multiplier)):
             scale = multiplier[m]
             imageToTest = cv2.resize(oriImg, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
-            imageToTest_padded, pad = util.padRightDownCorner(imageToTest, stride, padValue)
+            imageToTest_padded, pad = padRightDownCorner(imageToTest, stride, padValue)
             im = np.transpose(np.float32(imageToTest_padded[:, :, :, np.newaxis]), (3, 2, 0, 1)) / 256 - 0.5
             im = np.ascontiguousarray(im)
 
@@ -116,7 +116,8 @@ class Body(object):
                     for j in range(nB):
                         vec = np.subtract(candB[j][:2], candA[i][:2])
                         norm = math.sqrt(vec[0] * vec[0] + vec[1] * vec[1])
-                        vec = np.divide(vec, norm)
+                        if norm:
+                            vec = np.divide(vec, norm)
 
                         startend = list(zip(np.linspace(candA[i][0], candB[j][0], num=mid_num), \
                                             np.linspace(candA[i][1], candB[j][1], num=mid_num)))
@@ -127,8 +128,11 @@ class Body(object):
                                           for I in range(len(startend))])
 
                         score_midpts = np.multiply(vec_x, vec[0]) + np.multiply(vec_y, vec[1])
+                        offset = 0
+                        if norm:
+                            offset = 0.5 * oriImg.shape[0] / norm - 1
                         score_with_dist_prior = sum(score_midpts) / len(score_midpts) + min(
-                            0.5 * oriImg.shape[0] / norm - 1, 0)
+                            offset, 0)
                         criterion1 = len(np.nonzero(score_midpts > thre2)[0]) > 0.8 * len(score_midpts)
                         criterion2 = score_with_dist_prior > 0
                         if criterion1 and criterion2:
@@ -207,11 +211,12 @@ class Body(object):
         return candidate, subset
 
 if __name__ == "__main__":
-    body_estimation = Body('../model/body_pose_model.pth')
+    import os.path
+    base_dir = os.path.abspath(os.path.dirname(__file__) + '/..')
+    body_estimation = Body(base_dir + '/model/body_pose_model.pth')
 
-    test_image = '../images/ski.jpg'
-    oriImg = cv2.imread(test_image)  # B,G,R order
+    oriImg = cv2.imread(base_dir + '/images/ski.jpg')  # B,G,R order
     candidate, subset = body_estimation(oriImg)
-    canvas = util.draw_bodypose(oriImg, candidate, subset)
+    canvas = draw_bodypose(oriImg, candidate, subset)
     plt.imshow(canvas[:, :, [2, 1, 0]])
     plt.show()

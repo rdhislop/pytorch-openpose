@@ -5,3 +5,13 @@ hiddenlayer/
 .ipynb_checkpoints/
 __pycache__
 *.prototxt
+
+# Enviroment Setup
+.vscode
+.venv/
+vevn/
+.env/
+env/
+
+# Compiled Files
+*.py[cod]

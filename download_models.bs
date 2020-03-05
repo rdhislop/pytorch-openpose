@@ -1,0 +1,7 @@
+cd model
+wget -c https://www.dropbox.com/sh/7xbup2qsn7vvjxo/AAC2TIWnbvaHf-MfQPxT4pf3a/hand_pose.caffemodel
+wget -c https://www.dropbox.com/sh/7xbup2qsn7vvjxo/AADX_DKAX6VjZ4x2Njdu_j5aa/body_pose_deploy.prototxt
+wget -c https://www.dropbox.com/sh/7xbup2qsn7vvjxo/AABaYNMvvNVFRWqyDXl7KQUxa/body_pose_model.pth
+wget -c https://www.dropbox.com/sh/7xbup2qsn7vvjxo/AABc4g_SsCVeQj8wmHnkEHSWa/body_pose.caffemodel
+wget -c https://www.dropbox.com/sh/7xbup2qsn7vvjxo/AACB31qQm3H_hqkzWGLWYjFIa/hand_pose_deploy.prototxt
+wget -c https://www.dropbox.com/sh/7xbup2qsn7vvjxo/AAApu9PiOpzGYEUqzIzsxqbFa/hand_pose_model.pth
